@@ -1,6 +1,6 @@
 const express = require("express");
 const path = require("path");
-const notes = require("./db/db.json");
+let notes = require("./db/db.json");
 const fs = require("fs");
 
 
@@ -15,14 +15,17 @@ app.use(express.static('public'));
   //app.get('/', (req, res) => {
   //    res.sendFile(path.join(__dirname, './public/index.html'));
   //})
+  app.get('/notes', (req, res) => {
+    res.sendFile(path.join(__dirname, './public/notes.html'));
+});
 
   app.get("/api/notes", (req, res) => {
     notes=JSON.parse(fs.readFileSync('./db/db.json','UTF8'))
     res.json(notes);
   });
   
-  
-  // Create an id to
+
+  // Create an id to delete
 app.post('/api/notes', (req, res) => {
     console.info(`${req.method} request received to add a note`);
     let newNote={
@@ -31,17 +34,15 @@ app.post('/api/notes', (req, res) => {
     }
     notes.push(newNote)
     fs.writeFile(
-    './db/db.json',
-    JSON.stringify(notes, null, 4),
-  );
-  res.json(notes)
-});
-
-// app.delete("/api/notes", (req, res) => {
-//   const newNote = req.body;
-//   writeToFile(destination, newNote);
-//   res.json(`${req.method} received`);
-// });
+        './db/db.json',
+        JSON.stringify(notes, null, 4),
+        (writeErr) =>
+          writeErr
+            ? console.error(writeErr)
+            : console.info('Successfully updated Notes!')
+      );
+      res.json(notes)
+    });
 
 app.get("/notes", (req, res) => res.sendFile(path.join(__dirname, '/public/notes.html')));
 
