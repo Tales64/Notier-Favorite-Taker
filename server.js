@@ -17,15 +17,25 @@ app.use(express.static('public'));
   //})
 
   app.get("/api/notes", (req, res) => {
-    // Notes=JSON.parse(fs.readFileSync('./db/db.json','UTF8'))
+    notes=JSON.parse(fs.readFileSync('./db/db.json','UTF8'))
     res.json(notes);
   });
-// Create an id to
-// app.post("/api/notes", (req, res) => {
-//   const newNote = req.body;
-//   writeToFile(destination, newNote);
-//   res.json(`${req.method} received`);
-// });
+  
+  
+  // Create an id to
+app.post('/api/notes', (req, res) => {
+    console.info(`${req.method} request received to add a note`);
+    let newNote={
+        title: req.body.title,
+        text: req.body.text,
+    }
+    notes.push(newNote)
+    fs.writeFile(
+    './db/db.json',
+    JSON.stringify(notes, null, 4),
+  );
+  res.json(notes)
+});
 
 // app.delete("/api/notes", (req, res) => {
 //   const newNote = req.body;
